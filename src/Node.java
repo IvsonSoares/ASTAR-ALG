@@ -2,11 +2,11 @@ import java.util.Stack;
 
 public class Node {
 
-    public double f = 0;
-    public int g = 0;
+    public double fScore = 0;
+    public int    gScore = 0;
     public double h = 0;
 
-    public Node previous;
+    public Node camefrom;
 
     public int row;
     public int column;
@@ -15,59 +15,59 @@ public class Node {
 
     private Stack<Node> neighbors = new Stack<Node>();
 
-    public boolean wall = false;
+    public boolean obstacle = false;
 
     public Node(char character, int column, int row){
         this.character = character;
         this.column = column;
         this.row = row;
 
-        this.setWall();
-        if(this.wall){
+        this.setObstacle();
+        if(this.obstacle){
             this.setCharacter('#');
         }
     }
 
-    public void addNeighbors(Stack<Stack<Node>> grid, int cols, int rows){
+    public void addNeighbors(Stack<Stack<Node>> matrix, int cols, int rows){
         int i = this.column;
         int j = this.row;
 
         if(i < cols - 1){   
-            this.neighbors.push(grid.get(i + 1).get(j));
+            this.neighbors.push(matrix.get(i + 1).get(j));
         }
 
         if(i > 0){
-            this.neighbors.push(grid.get(i - 1).get(j));
+            this.neighbors.push(matrix.get(i - 1).get(j));
         }
 
         if(j < rows - 1){
-            this.neighbors.push(grid.get(i).get(j + 1));
+            this.neighbors.push(matrix.get(i).get(j + 1));
         }
 
         if(j > 0){
-            this.neighbors.push(grid.get(i).get(j - 1));
+            this.neighbors.push(matrix.get(i).get(j - 1));
         }
 
     }
 
     //number of obstacles
-    public void setWall(){
+    public void setObstacle(){
         double rand = Math.random();
         if(rand < 0.3){
-            this.wall = true;
+            this.obstacle = true;
         }
     }
 
-    public boolean getWall(){
-        return this.wall;
+    public boolean getObstacle(){
+        return this.obstacle;
     }
 
-    public void setPreviousNeighbor(Node neighbor){
-        this.previous = neighbor;
+    public void setCameFrom(Node camefrom){
+        this.camefrom = camefrom;
     }
 
-    public Node getPreviousNeighbor(){
-        return this.previous;
+    public Node getCameFrom(){
+        return this.camefrom;
     }
 
 
