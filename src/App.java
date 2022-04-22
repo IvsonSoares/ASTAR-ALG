@@ -1,7 +1,13 @@
 //                  PSEUDOCODE LINK ON WIKIPEDIA
 // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 
-// FINDING OPTIMAL PATH OF A MAZZLE, STACK IMPLEMENTED
+//                 Gif Animated
+//https://upload.wikimedia.org/wikipedia/commons/c/c2/Astarpathfinding.gif
+
+
+
+//               FINDING OPTIMAL PATH OF A MAZZLE, STACK IMPLEMENTATION
+// ****IF THE START OR THE END is blocked there is no way out
 
 import java.util.Stack;
 
@@ -43,10 +49,12 @@ public class App {
         //Start pos
         start = matrix.get(1).get(1);
         start.setCharacter('S');
+        start.obstacle = false;
 
         //End pos
         end = matrix.get(rows - 2).get(cols - 2);
         end.setCharacter('E');
+        end.obstacle = false;
 
         printMatrix(matrix, cols, rows);
         System.out.println();
@@ -63,16 +71,15 @@ public class App {
             //stack of nodes to evaluate
             if(openSet.size() > 0){
 
-                int winner = 0;
+                int optimal   = 0;
 
                 for(int i = 0; i < openSet.size(); i++){
-                    if(openSet.get(i).fScore < openSet.get(winner).fScore){
-                        winner = i;
+                    if(openSet.get(i).fScore < openSet.get(optimal).fScore){
+                        optimal  = i;
                     }
                 }
 
-                Node current = openSet.get(winner);
-
+                Node current = openSet.get(optimal);
 
                 // Getting optimal path
                 if(current.equals(end)){
@@ -80,8 +87,6 @@ public class App {
                     Node temp = current;
 
                     path.push(temp);
-                    
-
                     //getting all parents nodes
                     while(temp.camefrom != null){
                         path.push(temp.camefrom);
@@ -124,25 +129,30 @@ public class App {
                         int tempG = current.gScore + 1;
                         
                         if(openSet.contains(neighbor)){
+                            //set new optmal f score
+                            // link parent node
                             if(tempG < neighbor.gScore){
                                 neighbor.gScore = tempG;
+                                neighbor.h = heuristic(neighbor, end);
+                                neighbor.fScore = neighbor.gScore + neighbor.h;
+                                neighbor.setCameFrom(current);
                             }
                         } else {
+                            //set new f score
+                            // link parent node
                             neighbor.gScore = tempG;
+                            neighbor.h = heuristic(neighbor, end);
+                            neighbor.fScore = neighbor.gScore + neighbor.h;
+                            neighbor.setCameFrom(current);
                             openSet.push(neighbor);
                         }
-
-                        neighbor.h = heuristic(neighbor, end);
-                        neighbor.fScore = neighbor.gScore + neighbor.h;
-
-                        neighbor.setCameFrom(current);
-
+                        
                     } // end of node check
                     
                 }
 
             } else {
-                System.out.println("NO SOLUTION");
+                System.out.println("No way out");
                 break;
                 //no solution
             }
@@ -162,6 +172,8 @@ public class App {
       
         for(int i = 0; i < cols; i++){
             for(int j = 0; j < rows; j++){
+
+                //borders
                 grid.get(0).get(j).setCharacter('#');
                 grid.get(0).get(j).obstacle = true;
 
@@ -173,9 +185,7 @@ public class App {
 
                 grid.get(cols - 1).get(j).setCharacter('#');
                 grid.get(cols - 1).get(j).obstacle = true;
-
-                //grid.get(2).get(j % 17).setCharacter('#');
-                //grid.get(2).get(j % 17).obstacle = true;
+                //end borders
 
                 System.out.print(grid.get(i).get(j).getCharacter());
                 System.out.print(' ');
@@ -184,7 +194,6 @@ public class App {
             System.out.println();
         }
     }
-
                 
     public static void markEvaluatedNodes(Stack<Node> closedSet){
         for(int i = 0; i < closedSet.size(); i++){
